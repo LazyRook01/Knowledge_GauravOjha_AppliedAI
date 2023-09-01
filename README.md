@@ -182,17 +182,17 @@ class Symbol():
 
 Now, let's break down each method and its purpose:
 
-1. `__init__(self, name)`: This is the constructor method that initializes a `Symbol` object with a given name. When you create an instance of `Symbol`, you provide a name that represents the logical symbol.
+1. `__init__(self, name)`: This is the constructor method for the `Symbol` class. It takes one argument, `name`, which is a string representing the name of the symbol. When you create an instance of the `Symbol` class, you provide a name for that symbol, and it gets stored as an attribute (`self.name`) of the object.
 
-2. `__repr__(self)`: This special method is called when the object needs to be represented as a string, such as when using the `print()` function or during string formatting. In this case, it simply returns the name of the symbol as a string.
+2. `__repr__(self)`: This is a special method in Python that defines the string representation of an object when using the `repr()` function or when the object is displayed in an interactive environment (e.g., in a REPL or Jupyter Notebook). In this case, it simply returns the `name` attribute as a string, so when you print a `Symbol` object, it will display its name.
 
-3. `evaluate(self, model)`: This method takes a `model` dictionary as an argument and attempts to retrieve the value of the symbol from the model. The `model` dictionary is expected to contain assignments of truth values to symbols. If the symbol's name is found in the model, its corresponding truth value is returned. If not found, it raises an exception indicating that the variable is not in the model.
+3. `evaluate(self, model)`: This method is used to evaluate the truth value of the symbol within a given model. It takes a `model` as an argument, which is expected to be a dictionary where keys are symbol names and values are Boolean truth values. It tries to look up the symbol's name in the `model` dictionary and return its corresponding truth value. If the symbol is not found in the `model`, it raises an exception indicating that the variable is not in the model.
 
-4. `formula(self)`: This method returns the formula representation of the symbol, which is simply its name. In symbolic logic, the formula representation is a textual representation of the logical expression.
+4. `formula(self)`: This method returns the formula representation of the symbol, which is simply its name as a string. For example, if the symbol has a name "A," calling `formula()` on it would return "A."
 
-5. `symbols(self)`: This method returns a set containing the name of the symbol. This is used to gather all the symbols used in a logical expression, which is important for creating truth tables and performing model checking.
+5. `symbols(self)`: This method returns a set containing the name of the symbol. It's used to collect all symbols present in an expression. In this case, it returns a set with a single element, which is the name of the symbol itself. This is helpful for collecting symbols from more complex logical expressions.
 
-Overall, the `Symbol` class encapsulates the behavior of a logical symbol in a symbolic logic system. It allows you to create symbols, evaluate their truth values in a given model, and retrieve their formula representations and associated symbols. This is the foundation for building more complex logical expressions and performing various logical operations.
+In summary, the `Symbol` class is designed to represent and work with individual symbols in a logical system. It can store the symbol's name, evaluate its truth value within a given model, and provide its string representation and the ability to collect symbols.
 ***
 ## Defining a class for Negation
 
@@ -494,6 +494,7 @@ knowledge = And(
 # Check if the knowledge base entails the statement "It's raining"
 print(model_check(knowledge, rain))
 
+'''
 # Define logical symbols
 P = Symbol("It is a Tuesday")
 Q = Symbol("It is Raining")
@@ -524,29 +525,68 @@ print(And(P, Q))
 
 Here's a breakdown of the major steps in the code:
 
-1. The `from logic import *` statement imports classes and functions from the `logic` module, which provides support for symbolic logical expressions.
 
-2. Logical symbols `rain`, `hagrid`, and `dumbledore` are defined using the `Symbol` class, representing different statements.
+1. **Importing the Logic Module:**
 
-3. A knowledge base `knowledge` is defined using logical expressions (`And`, `Implication`, `Or`, and `Not`) that capture relationships between the logical symbols.
+   ```python
+   from logic import *
+   ```
 
-4. The `model_check` function is used to check if the knowledge base entails the statement "It's raining." The result is printed.
+   You're importing a module named `logic`, which presumably contains definitions for logical symbols and functions for working with symbolic logic.
 
-5. More logical symbols `P`, `Q`, and `R` are defined.
+2. **Defining Logical Symbols:**
 
-6. Another knowledge base `knowledge1` is defined using logical expressions to capture relationships between the new symbols.
+   ```python
+   rain = Symbol("rain")         # It's raining
+   hagrid = Symbol("hagrid")     # Harry visited Hagrid
+   dumbledore = Symbol("dumbledore")  # Harry visited Dumbledore
+   ```
 
-7. The contents of `knowledge1` are printed.
+   Here, you're defining three logical symbols using the `Symbol` class provided by the `logic` module. These symbols represent different statements or propositions:
+   
+   - `rain` represents the statement "It's raining."
+   - `hagrid` represents the statement "Harry visited Hagrid."
+   - `dumbledore` represents the statement "Harry visited Dumbledore."
 
-8. The formula representation of `knowledge1` and the set of symbols it uses are printed.
+3. **Constructing Knowledge Base (KB):**
 
-9. The `model_check` function is used to check if the knowledge base `knowledge1` entails the statement "Harry will go for a run."
+   ```python
+   knowledge = And(
+       Implication(Not(rain), hagrid),
+       Or(hagrid, dumbledore),
+       Not(And(hagrid, dumbledore)),
+       dumbledore
+   )
+   ```
 
-10. The negation of the statement "It is a Tuesday" is printed.
+   You're building a knowledge base `knowledge` by combining multiple logical statements using the following logical operations:
 
-11. Biconditional and conjunction expressions involving `P` and `Q` are created and printed.
+   - `Implication(Not(rain), hagrid)`: This represents the logical implication "If it's not raining, then Harry visited Hagrid."
+   - `Or(hagrid, dumbledore)`: This represents the logical disjunction "Harry visited Hagrid or Harry visited Dumbledore."
+   - `Not(And(hagrid, dumbledore))`: This represents the negation of "Harry visited both Hagrid and Dumbledore simultaneously."
+   - `dumbledore`: This is a straightforward statement that "Harry visited Dumbledore."
 
-Overall, the code demonstrates how to create logical expressions, define knowledge bases, evaluate truth values, and use logical operators to perform various operations in symbolic logic.
+   All these statements are combined using the `And` operation, implying that all of them are true at the same time.
+
+4. **Printing the Knowledge Base:**
+
+   ```python
+   print(knowledge)
+   ```
+
+   This line prints out the `knowledge` base, showing the logical statements you've defined in a readable format.
+
+5. **Model Checking:**
+
+   ```python
+   print(model_check(knowledge, rain))
+   ```
+
+   You're using a function called `model_check` to check whether the statement `rain` is true in the context of the `knowledge` base. In other words, you're asking if it's raining based on the logical statements and rules defined in your knowledge base.
+
+   The `model_check` function will return `True` or `False` depending on whether it can find a model (a set of truth values for the symbols) that satisfies all the conditions in the `knowledge` base. In this case, it checks if there's a model where `rain` is true given the other statements.
+
+Overall, this code is a basic example of using symbolic logic to represent and reason about statements in a formal way, and it checks whether it's raining based on the logical relationships defined in the knowledge base.
 ***
 # ==clue.py==
 This code uses the `logic` module to represent and reason about the game of Clue (also known as Cluedo), a popular board game. The code defines a knowledge base and checks the possible values of different cards using the `model_check` function. Let's break down the code step by step:

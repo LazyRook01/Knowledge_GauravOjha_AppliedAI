@@ -11,7 +11,9 @@ knowledge = And(
     dumbledore
 )
 
+
 print(knowledge)
+
 print(model_check(knowledge, rain))
 
 '''
