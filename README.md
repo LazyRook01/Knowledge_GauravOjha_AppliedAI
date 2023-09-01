@@ -1,15 +1,10 @@
-# logic.py
-```
+# ==logic.py==
+
+```python
 import itertools
-```
 
-In Python, `itertools` is a standard library module that provides a collection of fast, memory-efficient tools for working with iterators, which are objects that can be iterated (looped) over, like lists, tuples, and more. The `itertools` module contains various functions that allow you to create and manipulate iterators, often in combination with one another, to perform various tasks efficiently.
-
-When you see the line `import itertools` in a Python script or program, it means that the code is importing the `itertools` module so that its functionality can be utilized within the script.
-***
-```
+# Define a class for representing symbols
 class Symbol():
-
     def __init__(self, name):
         self.name = name
 
@@ -18,7 +13,7 @@ class Symbol():
 
     def evaluate(self, model):
         try:
-            return (model[self.name])
+            return model[self.name]  # Retrieve value from the model dictionary
         except KeyError:
             raise Exception(f"variable {self.name} not in model")
 
@@ -27,53 +22,8 @@ class Symbol():
 
     def symbols(self):
         return {self.name}
-```
 
-let's break down the details of the `Symbol` class step by step:
-
-```python
-class Symbol():
-
-    def __init__(self, name):
-        self.name = name
-```
-
-Here, you're defining a class named `Symbol`. This class has a constructor method `__init__()` that takes a parameter `name`. Inside the constructor, the value of the parameter is assigned to an instance variable `self.name`.
-
-```python
-    def __repr__(self):
-        return self.name
-```
-
-The `__repr__()` method is defined to customize the string representation of an instance of the `Symbol` class. It returns the value of `self.name`, which will be used when you call the `repr()` function on an instance of this class.
-
-```python
-    def evaluate(self, model):
-        try:
-            return model[self.name]
-        except KeyError:
-            raise Exception(f"variable {self.name} not in model")
-```
-
-The `evaluate()` method takes a parameter `model`, which is presumably a dictionary-like object containing variable names as keys and their corresponding values. Inside the method, it attempts to retrieve the value associated with `self.name` from the `model`. If the key `self.name` doesn't exist in the `model`, a `KeyError` will be raised. In that case, an `Exception` is raised with a message indicating that the variable is not found in the model.
-
-```python
-    def formula(self):
-        return self.name
-```
-
-The `formula()` method returns the value of `self.name`. This method is used to obtain the name of the symbol, which might be useful when you want to represent the symbol in a formulaic context.
-
-```python
-    def symbols(self):
-        return {self.name}
-```
-
-The `symbols()` method returns a set containing the name of the symbol (`self.name`). This method is used to extract the set of symbols present in a particular context. The set is enclosed in curly braces `{}`.
-
-To summarize, the `Symbol` class represents a symbol with a given name. It has methods to retrieve the symbol's name, evaluate its value within a provided model, retrieve the symbol's formulaic representation, and extract the set of symbols contained within the instance. This class seems to be a part of a larger system that deals with symbolic expressions and mathematical modeling, where symbols (variables) are associated with values for computation and analysis.
-***
-```
+# Define a class for negation
 class Not():
     def __init__(self, name):
         self.name = name
@@ -82,70 +32,28 @@ class Not():
         return f"Not({self.name})"
 
     def evaluate(self, model):
-        return not self.name.evaluate(model)
+        return not self.name.evaluate(model)  # Negate the evaluation result of the expression
 
     def formula(self):
         return "¬" + self.name.formula()
 
     def symbols(self):
         return self.name.symbols()
-```
-Let's delve into the details of the `Not` class:
 
-```python
-class Not():
-    def __init__(self, name):
-        self.name = name
-```
-
-Here, you're defining a class named `Not`. This class seems to represent the logical negation operation, which takes a symbol or another logical expression as an operand. The constructor method `__init__()` takes a parameter `name`, which represents the operand being negated. The `name` is stored as an instance variable `self.name`.
-
-```python
-    def __repr__(self):
-        return f"Not({self.name})"
-```
-
-The `__repr__()` method is defined to provide a custom string representation of an instance of the `Not` class. It returns a string in the format `"Not(<operand>)"`, where `<operand>` is the string representation of the `name` operand.
-
-```python
-    def evaluate(self, model):
-        return not self.name.evaluate(model)
-```
-
-The `evaluate()` method calculates the logical negation of the operand's evaluation result using the provided `model`. It calls the `evaluate()` method of the `name` operand with the given `model` and then negates the result using the `not` operator. This simulates the behavior of logical negation.
-
-```python
-    def formula(self):
-        return "¬" + self.name.formula()
-```
-
-The `formula()` method returns a string representation of the formula formed by applying logical negation to the operand's formula. It adds the "¬" (negation) symbol to the beginning of the operand's formula, creating a new formula that represents the negation of the original formula.
-
-```python
-    def symbols(self):
-        return self.name.symbols()
-```
-
-The `symbols()` method returns the set of symbols present in the operand's expression. It does this by calling the `symbols()` method of the `name` operand. This method allows you to retrieve all the symbols used in the negation expression.
-
-In summary, the `Not` class represents the logical negation of a symbol or logical expression. It has methods to retrieve the custom string representation of the negation, evaluate the negation using a model, generate the formula for the negation expression, and extract the symbols present in the expression. This class seems to be part of a system for working with logical expressions and truth values.
-***
-```
+# Define a class for conjunction (AND)
 class And():
     def __init__(self, *conjuncts):
         self.conjuncts = list(conjuncts)
 
     def __repr__(self):
-        conjunctions = ", ".join(
-            [str(conjunct) for conjunct in self.conjuncts]
-        )
+        conjunctions = ", ".join([str(conjunct) for conjunct in self.conjuncts])
         return f"And({conjunctions})"
 
     def add(self, conjunct):
         self.conjuncts.append(conjunct)
 
     def evaluate(self, model):
-        return all(conjunct.evaluate(model) for conjunct in self.conjuncts)
+        return all(conjunct.evaluate(model) for conjunct in self.conjuncts)  # Evaluate all conjuncts and return True if all are True
 
     def formula(self):
         if len(self.conjuncts) == 1:
@@ -154,61 +62,8 @@ class And():
 
     def symbols(self):
         return set.union(*[conjunct.symbols() for conjunct in self.conjuncts])
-```
 
-let's dive into the details of the `And` class:
-
-```python
-class And():
-    def __init__(self, *conjuncts):
-        self.conjuncts = list(conjuncts)
-```
-
-Here, you're defining a class named `And`. This class seems to represent the logical AND operation, which takes multiple logical expressions (conjuncts) as operands. The constructor method `__init__()` takes any number of arguments (`*conjuncts`) and converts them into a list called `self.conjuncts`, which stores the individual conjuncts.
-
-```python
-    def __repr__(self):
-        conjunctions = ", ".join(
-            [str(conjunct) for conjunct in self.conjuncts]
-        )
-        return f"And({conjunctions})"
-```
-
-The `__repr__()` method provides a custom string representation of an instance of the `And` class. It generates a string that lists the individual conjuncts separated by commas, enclosed in the format `"And(<conjuncts>)"`.
-
-```python
-    def add(self, conjunct):
-        self.conjuncts.append(conjunct)
-```
-
-The `add()` method allows you to add additional conjuncts to an existing instance of the `And` class. This method appends the provided `conjunct` to the list of existing conjuncts.
-
-```python
-    def evaluate(self, model):
-        return all(conjunct.evaluate(model) for conjunct in self.conjuncts)
-```
-
-The `evaluate()` method calculates the logical AND of all the conjuncts' evaluation results using the provided `model`. It iterates through each conjunct, calls its `evaluate()` method with the given `model`, and then uses the built-in `all()` function to check if all the conjuncts evaluate to `True`.
-
-```python
-    def formula(self):
-        if len(self.conjuncts) == 1:
-            return self.conjuncts[0].formula()
-        return " ∧ ".join([conjunct.formula() for conjunct in self.conjuncts])
-```
-
-The `formula()` method generates a string representation of the logical formula represented by the conjunction of the conjuncts. If there's only one conjunct, it returns its formula. Otherwise, it joins the formulas of all conjuncts using the "∧" (logical AND) symbol.
-
-```python
-    def symbols(self):
-        return set.union(*[conjunct.symbols() for conjunct in self.conjuncts])
-```
-
-The `symbols()` method returns the set of symbols present in all the conjuncts. It does this by calling the `symbols()` method of each conjunct and then performing a set union operation to combine all the symbol sets.
-
-In summary, the `And` class represents the logical conjunction of multiple logical expressions (conjuncts). It allows adding new conjuncts, evaluating the conjunction using a model, generating the formula for the conjunction expression, and extracting the symbols present in the expression. This class is designed for working with logical expressions involving conjunctions.
-***
-```
+# Define a class for disjunction (OR)
 class Or():
     def __init__(self, *disjuncts):
         self.disjuncts = list(disjuncts)
@@ -218,135 +73,17 @@ class Or():
         return f"Or({disjuncts})"
 
     def evaluate(self, model):
-        return any(disjunct.evaluate(model) for disjunct in self.disjuncts)
+        return any(disjunct.evaluate(model) for disjunct in self.disjuncts)  # Evaluate all disjuncts and return True if any is True
 
     def formula(self):
         if len(self.disjuncts) == 1:
             return self.disjuncts[0].formula()
-        return " ∨  ".join([disjunct.formula() for disjunct in self.disjuncts])
+        return " ∨ ".join([disjunct.formula() for disjunct in self.disjuncts])
 
     def symbols(self):
         return set.union(*[disjunct.symbols() for disjunct in self.disjuncts])
-```
 
-let's dive into the details of the `And` class:
-
-```python
-class And():
-    def __init__(self, *conjuncts):
-        self.conjuncts = list(conjuncts)
-```
-
-Here, you're defining a class named `And`. This class seems to represent the logical AND operation, which takes multiple logical expressions (conjuncts) as operands. The constructor method `__init__()` takes any number of arguments (`*conjuncts`) and converts them into a list called `self.conjuncts`, which stores the individual conjuncts.
-
-```python
-    def __repr__(self):
-        conjunctions = ", ".join(
-            [str(conjunct) for conjunct in self.conjuncts]
-        )
-        return f"And({conjunctions})"
-```
-
-The `__repr__()` method provides a custom string representation of an instance of the `And` class. It generates a string that lists the individual conjuncts separated by commas, enclosed in the format `"And(<conjuncts>)"`.
-
-```python
-    def add(self, conjunct):
-        self.conjuncts.append(conjunct)
-```
-
-The `add()` method allows you to add additional conjuncts to an existing instance of the `And` class. This method appends the provided `conjunct` to the list of existing conjuncts.
-
-```python
-    def evaluate(self, model):
-        return all(conjunct.evaluate(model) for conjunct in self.conjuncts)
-```
-
-The `evaluate()` method calculates the logical AND of all the conjuncts' evaluation results using the provided `model`. It iterates through each conjunct, calls its `evaluate()` method with the given `model`, and then uses the built-in `all()` function to check if all the conjuncts evaluate to `True`.
-
-```python
-    def formula(self):
-        if len(self.conjuncts) == 1:
-            return self.conjuncts[0].formula()
-        return " ∧ ".join([conjunct.formula() for conjunct in self.conjuncts])
-```
-
-The `formula()` method generates a string representation of the logical formula represented by the conjunction of the conjuncts. If there's only one conjunct, it returns its formula. Otherwise, it joins the formulas of all conjuncts using the "∧" (logical AND) symbol.
-
-```python
-    def symbols(self):
-        return set.union(*[conjunct.symbols() for conjunct in self.conjuncts])
-```
-
-The `symbols()` method returns the set of symbols present in all the conjuncts. It does this by calling the `symbols()` method of each conjunct and then performing a set union operation to combine all the symbol sets.
-
-In summary, the `And` class represents the logical conjunction of multiple logical expressions (conjuncts). It allows adding new conjuncts, evaluating the conjunction using a model, generating the formula for the conjunction expression, and extracting the symbols present in the expression. This class is designed for working with logical expressions involving conjunctions.
-***
-```
-class Or():
-    def __init__(self, *disjuncts):
-        self.disjuncts = list(disjuncts)
-
-    def __repr__(self):
-        disjuncts = ", ".join([str(disjunct) for disjunct in self.disjuncts])
-        return f"Or({disjuncts})"
-
-    def evaluate(self, model):
-        return any(disjunct.evaluate(model) for disjunct in self.disjuncts)
-
-    def formula(self):
-        if len(self.disjuncts) == 1:
-            return self.disjuncts[0].formula()
-        return " ∨  ".join([disjunct.formula() for disjunct in self.disjuncts])
-
-    def symbols(self):
-        return set.union(*[disjunct.symbols() for disjunct in self.disjuncts])
-```
-
-
-let's break down the details of the `Or` class:
-
-```python
-class Or():
-    def __init__(self, *disjuncts):
-        self.disjuncts = list(disjuncts)
-```
-
-Here, you're defining a class named `Or`. This class appears to represent the logical OR operation, which takes multiple logical expressions (disjuncts) as operands. The constructor method `__init__()` takes any number of arguments (`*disjuncts`) and converts them into a list called `self.disjuncts`, which stores the individual disjuncts.
-
-```python
-    def __repr__(self):
-        disjuncts = ", ".join([str(disjunct) for disjunct in self.disjuncts])
-        return f"Or({disjuncts})"
-```
-
-The `__repr__()` method provides a custom string representation of an instance of the `Or` class. It generates a string that lists the individual disjuncts separated by commas, enclosed in the format `"Or(<disjuncts>)"`.
-
-```python
-    def evaluate(self, model):
-        return any(disjunct.evaluate(model) for disjunct in self.disjuncts)
-```
-
-The `evaluate()` method calculates the logical OR of all the disjuncts' evaluation results using the provided `model`. It iterates through each disjunct, calls its `evaluate()` method with the given `model`, and then uses the built-in `any()` function to check if at least one of the disjuncts evaluates to `True`.
-
-```python
-    def formula(self):
-        if len(self.disjuncts) == 1:
-            return self.disjuncts[0].formula()
-        return " ∨  ".join([disjunct.formula() for disjunct in self.disjuncts])
-```
-
-The `formula()` method generates a string representation of the logical formula represented by the disjunction of the disjuncts. If there's only one disjunct, it returns its formula. Otherwise, it joins the formulas of all disjuncts using the "∨" (logical OR) symbol.
-
-```python
-    def symbols(self):
-        return set.union(*[disjunct.symbols() for disjunct in self.disjuncts])
-```
-
-The `symbols()` method returns the set of symbols present in all the disjuncts. It does this by calling the `symbols()` method of each disjunct and then performing a set union operation to combine all the symbol sets.
-
-In summary, the `Or` class represents the logical disjunction of multiple logical expressions (disjuncts). It evaluates the disjunction using a model, generates the formula for the disjunction expression, and extracts the symbols present in the expression. This class is designed for working with logical expressions involving disjunctions.
-***
-```
+# Define a class for implication
 class Implication():
     def __init__(self, left, right):
         self.left = left
@@ -356,65 +93,17 @@ class Implication():
         return f"Implication({self.left}, {self.right})"
 
     def evaluate(self, model):
-        return ((not self.left.evaluate(model))
-                or self.right.evaluate(model))
+        return (not self.left.evaluate(model)) or self.right.evaluate(model)  # Implication is True unless left is True and right is False
 
     def formula(self):
         left = self.left.formula()
         right = self.right.formula()
-
         return f"{left} => {right}"
 
     def symbols(self):
         return set.union(self.left.symbols(), self.right.symbols())
-```
 
-
-let's break down the details of the `Implication` class:
-
-```python
-class Implication():
-    def __init__(self, left, right):
-        self.left = left
-        self.right = right
-```
-
-Here, you're defining a class named `Implication`. This class seems to represent the logical implication operation (→), which takes two logical expressions as operands: the left-hand side (left) and the right-hand side (right). The constructor method `__init__()` takes two parameters, `left` and `right`, representing the two sides of the implication. These are stored as instance variables, `self.left` and `self.right`.
-
-```python
-    def __repr__(self):
-        return f"Implication({self.left}, {self.right})"
-```
-
-The `__repr__()` method provides a custom string representation of an instance of the `Implication` class. It generates a string in the format `"Implication(<left>, <right>)"`.
-
-```python
-    def evaluate(self, model):
-        return ((not self.left.evaluate(model))
-                or self.right.evaluate(model))
-```
-
-The `evaluate()` method calculates the result of the implication using the provided `model`. It evaluates the logical NOT of the left-hand side using the `not` operator and then evaluates the logical OR of the negated left-hand side and the right-hand side. This simulates the behavior of the implication operation.
-
-```python
-    def formula(self):
-        left = self.left.formula()
-        right = self.right.formula()
-        return f"{left} => {right}"
-```
-
-The `formula()` method generates a string representation of the formula represented by the implication. It constructs a string by formatting the left-hand side followed by "=>", and then the right-hand side.
-
-```python
-    def symbols(self):
-        return set.union(self.left.symbols(), self.right.symbols())
-```
-
-The `symbols()` method returns the set of symbols present in both the left-hand side and the right-hand side of the implication. It does this by performing a set union operation on the symbol sets of `self.left` and `self.right`.
-
-In summary, the `Implication` class represents the logical implication operation (→) between two logical expressions. It evaluates the implication using a model, generates the formula for the implication expression, and extracts the symbols present in the expression. This class is designed for working with logical expressions involving implications.
-***
-```
+# Define a class for biconditional
 class Biconditional():
     def __init__(self, left, right):
         self.left = left
@@ -424,68 +113,18 @@ class Biconditional():
         return f"Biconditional({self.left}, {self.right})"
 
     def evaluate(self, model):
-        return ((self.left.evaluate(model)
-                 and self.right.evaluate(model))
-                or (not self.left.evaluate(model)
-                    and not self.right.evaluate(model)))
+        return ((self.left.evaluate(model) and self.right.evaluate(model))
+                or (not self.left.evaluate(model) and not self.right.evaluate(model)))  # Biconditional is True if both sides have the same truth value
 
     def formula(self):
         left = str(self.left)
         right = str(self.right)
-
         return f"{left} <=> {right}"
 
     def symbols(self):
         return set.union(self.left.symbols(), self.right.symbols())
-```
 
-let's break down the details of the `Biconditional` class:
-
-```python
-class Biconditional():
-    def __init__(self, left, right):
-        self.left = left
-        self.right = right
-```
-
-Here, you're defining a class named `Biconditional`. This class seems to represent the logical biconditional operation (↔), which takes two logical expressions as operands: the left-hand side (left) and the right-hand side (right). The constructor method `__init__()` takes two parameters, `left` and `right`, representing the two sides of the biconditional. These are stored as instance variables, `self.left` and `self.right`.
-
-```python
-    def __repr__(self):
-        return f"Biconditional({self.left}, {self.right})"
-```
-
-The `__repr__()` method provides a custom string representation of an instance of the `Biconditional` class. It generates a string in the format `"Biconditional(<left>, <right>)"`.
-
-```python
-    def evaluate(self, model):
-        return ((self.left.evaluate(model)
-                 and self.right.evaluate(model))
-                or (not self.left.evaluate(model)
-                    and not self.right.evaluate(model)))
-```
-
-The `evaluate()` method calculates the result of the biconditional using the provided `model`. It evaluates the logical AND of both sides and the logical NOT of both sides, and then uses the logical OR operator to combine these results. This simulates the behavior of the biconditional operation.
-
-```python
-    def formula(self):
-        left = str(self.left)
-        right = str(self.right)
-        return f"{left} <=> {right}"
-```
-
-The `formula()` method generates a string representation of the formula represented by the biconditional. It constructs a string by formatting the left-hand side followed by "<=>" and then the right-hand side.
-
-```python
-    def symbols(self):
-        return set.union(self.left.symbols(), self.right.symbols())
-```
-
-The `symbols()` method returns the set of symbols present in both the left-hand side and the right-hand side of the biconditional. It does this by performing a set union operation on the symbol sets of `self.left` and `self.right`.
-
-In summary, the `Biconditional` class represents the logical biconditional operation (↔) between two logical expressions. It evaluates the biconditional using a model, generates the formula for the biconditional expression, and extracts the symbols present in the expression. This class is designed for working with logical expressions involving biconditionals.
-***
-```
+# Function to create truth table for a set of symbols
 def create_table(symbols):
     values = [True, False]
     num_columns = len(symbols)
@@ -496,35 +135,10 @@ def create_table(symbols):
         for symbol, value in zip(symbols, model):
             temp[symbol] = value
         table.append(temp)
-        del (temp)
+        del temp
     return table
-```
 
-The `create_table` function generates a truth table for a given set of symbols. It computes all possible combinations of truth values for the symbols and creates a table that associates these combinations with their corresponding values in a dictionary format.
-
-Let's break down the function step by step:
-
-1. The `symbols` parameter is a list of symbolic names (variables).
-
-2. `values` is a list containing `True` and `False`, representing the possible truth values.
-
-3. `num_columns` calculates the number of symbols, which corresponds to the number of columns in the truth table.
-
-4. `all_combinations` is created using `itertools.product` to generate all possible combinations of truth values for the symbols. It's a list of tuples where each tuple represents a single row in the truth table.
-
-5. The loop iterates through each combination (`model`) in `all_combinations`.
-
-6. Inside the loop, a temporary dictionary `temp` is created to represent a row in the truth table. The loop then pairs each symbol with its corresponding truth value using the `zip()` function, and adds these pairs to the `temp` dictionary.
-
-7. After adding all symbol-value pairs to `temp`, the `temp` dictionary is appended to the `table` list, which represents the truth table.
-
-8. The `temp` dictionary is deleted using `del` to free up memory for the next iteration.
-
-9. Finally, the function returns the generated `table` containing dictionaries representing each row of the truth table.
-
-In summary, the `create_table` function generates a truth table for a set of symbols by computing all possible combinations of truth values for those symbols. It returns a list of dictionaries, where each dictionary represents a row in the truth table with symbols as keys and their corresponding truth values as values.
-***
-```
+# Function to check if a given knowledge base entails a query
 def model_check(knowledge, query):
     symbols = set.union(knowledge.symbols(), query.symbols())
     model_table = create_table(symbols)
@@ -537,146 +151,558 @@ def model_check(knowledge, query):
     return final_answer
 ```
 
-The `model_check` function implements a basic model checking procedure. It checks whether a given logical `knowledge` and `query` are true in all possible models, which are generated using a truth table approach. Let's break down the function step by step:
+ `logic.py` module defines classes for symbolic logic constructs (like symbols, connectives, and functions for evaluating logical expressions) and provides tools for performing model checking. This module enables you to create logical expressions, evaluate their truth values based on provided models, and determine if one logical expression follows from another within a given knowledge base.
+ ***
+ ## Importing required libraries
+ The line `import itertools` at the beginning of the code imports the `itertools` module, which is a built-in Python module that provides various functions and iterators for working with iterators and combinatorial operations. `itertools` is part of the Python standard library and comes with Python by default, so you don't need to install anything to use it.
+ ***
+## Defining a class for representing symbols
 
-1. The `knowledge` parameter is a logical expression representing the background knowledge, and the `query` parameter is the logical expression you want to evaluate.
+```python
+# Define a class for representing symbols
+class Symbol():
+    def __init__(self, name):
+        self.name = name  # Initialize the symbol with a given name
 
-2. The function starts by creating a set of symbols by taking the union of the symbols present in both the `knowledge` and `query` expressions.
+    def __repr__(self):
+        return self.name  # Return the name of the symbol when it's converted to a string representation
 
-3. The `model_table` is generated using the `create_table` function, which provides all possible truth value combinations for the symbols.
+    def evaluate(self, model):
+        try:
+            return model[self.name]  # Try to retrieve the value from the model dictionary
+        except KeyError:
+            raise Exception(f"variable {self.name} not in model")  # Raise an exception if the symbol's value is not found in the model
 
-4. The loop iterates through each model in the `model_table`.
+    def formula(self):
+        return self.name  # Return the name of the symbol as its formula representation
 
-5. Inside the loop, it checks if the `knowledge` is true in the current `model` by calling the `evaluate` method of the `knowledge` expression with the current `model`.
-
-6. If the `knowledge` is true in the current `model`, the `query` expression is evaluated in the same `model`, and the result is stored in the `final_answers` list.
-
-7. After iterating through all models, the `final_answers` list contains a list of truth values for the `query` expression across all models where the `knowledge` is true.
-
-8. The `final_answer` is calculated using the `all()` function to check if all values in `final_answers` are `True`, indicating that the `query` is true in all models where the `knowledge` is true.
-
-9. The function returns the `final_answer`, which represents whether the `query` is logically entailed by the `knowledge` in all possible models where the `knowledge` holds.
-
-In summary, the `model_check` function performs model checking by generating a truth table of all possible models, evaluating the `knowledge` and `query` expressions for each model, and checking if the `query` holds in all models where the `knowledge` holds. It returns a boolean value indicating whether the `query` is logically entailed by the `knowledge` using this model checking approach.
-***
-# Harry.py
-
+    def symbols(self):
+        return {self.name}  # Return a set containing the name of this symbol
 ```
+
+Now, let's break down each method and its purpose:
+
+1. `__init__(self, name)`: This is the constructor method that initializes a `Symbol` object with a given name. When you create an instance of `Symbol`, you provide a name that represents the logical symbol.
+
+2. `__repr__(self)`: This special method is called when the object needs to be represented as a string, such as when using the `print()` function or during string formatting. In this case, it simply returns the name of the symbol as a string.
+
+3. `evaluate(self, model)`: This method takes a `model` dictionary as an argument and attempts to retrieve the value of the symbol from the model. The `model` dictionary is expected to contain assignments of truth values to symbols. If the symbol's name is found in the model, its corresponding truth value is returned. If not found, it raises an exception indicating that the variable is not in the model.
+
+4. `formula(self)`: This method returns the formula representation of the symbol, which is simply its name. In symbolic logic, the formula representation is a textual representation of the logical expression.
+
+5. `symbols(self)`: This method returns a set containing the name of the symbol. This is used to gather all the symbols used in a logical expression, which is important for creating truth tables and performing model checking.
+
+Overall, the `Symbol` class encapsulates the behavior of a logical symbol in a symbolic logic system. It allows you to create symbols, evaluate their truth values in a given model, and retrieve their formula representations and associated symbols. This is the foundation for building more complex logical expressions and performing various logical operations.
+***
+## Defining a class for Negation
+
+```python
+# Define a class for negation
+class Not():
+    def __init__(self, name):
+        self.name = name  # Initialize the negation with an expression (symbol or another logical expression)
+
+    def __repr__(self):
+        return f"Not({self.name})"  # Return a string representation of the negation expression
+
+    def evaluate(self, model):
+        return not self.name.evaluate(model)  # Evaluate the negation: negate the evaluation result of the expression
+
+    def formula(self):
+        return "¬" + self.name.formula()  # Return the formula representation of the negation expression
+
+    def symbols(self):
+        return self.name.symbols()  # Gather symbols used in the negation expression
+```
+
+Let's go through each method and its purpose:
+
+1. `__init__(self, name)`: This is the constructor method that initializes a `Not` object with an expression (logical symbol or another logical expression) that needs to be negated.
+
+2. `__repr__(self)`: This special method is called when the object needs to be represented as a string, such as when using the `print()` function or during string formatting. In this case, it returns a string representation of the negation operation that includes the expression being negated.
+
+3. `evaluate(self, model)`: This method takes a `model` dictionary as an argument and evaluates the negation operation. It negates the evaluation result of the expression passed as the argument to the constructor.
+
+4. `formula(self)`: This method returns the formula representation of the negation operation, which is the negation symbol "¬" followed by the formula representation of the expression being negated.
+
+5. `symbols(self)`: This method gathers the set of symbols used in the negation expression. It simply delegates this task to the expression being negated.
+
+Overall, the `Not` class encapsulates the behavior of the logical negation operation. It allows you to create negations of logical expressions, evaluate their truth values, retrieve their formula representations, and gather symbols used within the negation. This is an essential component for constructing more complex logical expressions and evaluating their truth values.
+***
+## Defining a class for conjunction
+
+```python
+# Define a class for conjunction (AND)
+class And():
+    def __init__(self, *conjuncts):
+        self.conjuncts = list(conjuncts)  # Initialize with a list of conjunct expressions
+
+    def __repr__(self):
+        conjunctions = ", ".join([str(conjunct) for conjunct in self.conjuncts])
+        return f"And({conjunctions})"  # Return a string representation of the conjunction expression
+
+    def add(self, conjunct):
+        self.conjuncts.append(conjunct)  # Add a new conjunct expression
+
+    def evaluate(self, model):
+        return all(conjunct.evaluate(model) for conjunct in self.conjuncts)  # Evaluate all conjuncts and return True if all are True
+
+    def formula(self):
+        if len(self.conjuncts) == 1:
+            return self.conjuncts[0].formula()
+        return " ∧ ".join([conjunct.formula() for conjunct in self.conjuncts])  # Return the formula representation of the conjunction expression
+
+    def symbols(self):
+        return set.union(*[conjunct.symbols() for conjunct in self.conjuncts])  # Gather symbols used in the conjunction expression
+```
+
+Let's go through each method and its purpose:
+
+1. `__init__(self, *conjuncts)`: This is the constructor method that initializes an `And` object with a variable number of conjunct expressions (logical symbols or other logical expressions).
+
+2. `__repr__(self)`: This special method is called when the object needs to be represented as a string, such as when using the `print()` function or during string formatting. In this case, it returns a string representation of the conjunction expression that includes all the conjuncts.
+
+3. `add(self, conjunct)`: This method allows adding a new conjunct expression to the existing conjunction. It's a way to build more complex conjunctions.
+
+4. `evaluate(self, model)`: This method takes a `model` dictionary as an argument and evaluates the conjunction operation. It evaluates all the conjunct expressions and returns `True` if all of them are `True`.
+
+5. `formula(self)`: This method returns the formula representation of the conjunction expression. If there's only one conjunct, it returns the formula of that conjunct. Otherwise, it returns a string that joins the formula representations of all conjuncts using the logical AND symbol "∧".
+
+6. `symbols(self)`: This method gathers the set of symbols used in the conjunction expression. It delegates this task to the symbols used in all the conjunct expressions and then combines them into a single set.
+
+Overall, the `And` class encapsulates the behavior of the logical conjunction operation. It allows you to create conjunctions of logical expressions, evaluate their truth values, retrieve their formula representations, and gather symbols used within the conjunction. This is essential for building complex logical expressions and performing various logical operations.
+***
+## Defining a class for disjunction
+
+```python
+# Define a class for disjunction (OR)
+class Or():
+    def __init__(self, *disjuncts):
+        self.disjuncts = list(disjuncts)  # Initialize with a list of disjunct expressions
+
+    def __repr__(self):
+        disjuncts = ", ".join([str(disjunct) for disjunct in self.disjuncts])
+        return f"Or({disjuncts})"  # Return a string representation of the disjunction expression
+
+    def evaluate(self, model):
+        return any(disjunct.evaluate(model) for disjunct in self.disjuncts)  # Evaluate all disjuncts and return True if any is True
+
+    def formula(self):
+        if len(self.disjuncts) == 1:
+            return self.disjuncts[0].formula()
+        return " ∨ ".join([disjunct.formula() for disjunct in self.disjuncts])  # Return the formula representation of the disjunction expression
+
+    def symbols(self):
+        return set.union(*[disjunct.symbols() for disjunct in self.disjuncts])  # Gather symbols used in the disjunction expression
+```
+
+Let's go through each method and its purpose:
+
+1. `__init__(self, *disjuncts)`: This is the constructor method that initializes an `Or` object with a variable number of disjunct expressions (logical symbols or other logical expressions).
+
+2. `__repr__(self)`: This special method is called when the object needs to be represented as a string, such as when using the `print()` function or during string formatting. In this case, it returns a string representation of the disjunction expression that includes all the disjuncts.
+
+3. `evaluate(self, model)`: This method takes a `model` dictionary as an argument and evaluates the disjunction operation. It evaluates all the disjunct expressions and returns `True` if at least one of them is `True`.
+
+4. `formula(self)`: This method returns the formula representation of the disjunction expression. If there's only one disjunct, it returns the formula of that disjunct. Otherwise, it returns a string that joins the formula representations of all disjuncts using the logical OR symbol "∨".
+
+5. `symbols(self)`: This method gathers the set of symbols used in the disjunction expression. It delegates this task to the symbols used in all the disjunct expressions and then combines them into a single set.
+
+Overall, the `Or` class encapsulates the behavior of the logical disjunction operation. It allows you to create disjunctions of logical expressions, evaluate their truth values, retrieve their formula representations, and gather symbols used within the disjunction. This is crucial for constructing complex logical expressions and performing various logical operations.
+***
+## Defining a class for implication
+
+```python
+# Define a class for implication
+class Implication():
+    def __init__(self, left, right):
+        self.left = left  # Initialize with the left-hand side expression
+        self.right = right  # Initialize with the right-hand side expression
+
+    def __repr__(self):
+        return f"Implication({self.left}, {self.right})"  # Return a string representation of the implication expression
+
+    def evaluate(self, model):
+        return (not self.left.evaluate(model)) or self.right.evaluate(model)  # Evaluate the implication expression
+
+    def formula(self):
+        left = self.left.formula()
+        right = self.right.formula()
+        return f"{left} => {right}"  # Return the formula representation of the implication expression
+
+    def symbols(self):
+        return set.union(self.left.symbols(), self.right.symbols())  # Gather symbols used in the implication expression
+```
+
+Let's go through each method and its purpose:
+
+1. `__init__(self, left, right)`: This is the constructor method that initializes an `Implication` object with left and right expressions (logical symbols or other logical expressions) representing the left and right sides of the implication.
+
+2. `__repr__(self)`: This special method is called when the object needs to be represented as a string, such as when using the `print()` function or during string formatting. In this case, it returns a string representation of the implication expression that includes both the left and right sides.
+
+3. `evaluate(self, model)`: This method takes a `model` dictionary as an argument and evaluates the implication operation. The implication is `True` unless the left-hand side is `True` and the right-hand side is `False`.
+
+4. `formula(self)`: This method returns the formula representation of the implication expression. It combines the formula representations of the left and right sides using the logical implication symbol "=>" to indicate that the left side implies the right side.
+
+5. `symbols(self)`: This method gathers the set of symbols used in the implication expression. It delegates this task to the symbols used in both the left and right sides of the implication and then combines them into a single set.
+
+Overall, the `Implication` class encapsulates the behavior of the logical implication operation. It allows you to create implications of logical expressions, evaluate their truth values, retrieve their formula representations, and gather symbols used within the implication. This is crucial for constructing complex logical expressions and performing various logical operations, such as modeling causal relationships.
+***
+## Defining a class for biconditional
+```python
+# Define a class for biconditional
+class Biconditional():
+    def __init__(self, left, right):
+        self.left = left  # Initialize with the left-hand side expression
+        self.right = right  # Initialize with the right-hand side expression
+
+    def __repr__(self):
+        return f"Biconditional({self.left}, {self.right})"  # Return a string representation of the biconditional expression
+
+    def evaluate(self, model):
+        return ((self.left.evaluate(model) and self.right.evaluate(model))
+                or (not self.left.evaluate(model) and not self.right.evaluate(model)))  # Evaluate the biconditional expression
+
+    def formula(self):
+        left = str(self.left)
+        right = str(self.right)
+        return f"{left} <=> {right}"  # Return the formula representation of the biconditional expression
+
+    def symbols(self):
+        return set.union(self.left.symbols(), self.right.symbols())  # Gather symbols used in the biconditional expression
+```
+
+Let's go through each method and its purpose:
+
+1. `__init__(self, left, right)`: This is the constructor method that initializes a `Biconditional` object with left and right expressions (logical symbols or other logical expressions) representing the left and right sides of the biconditional.
+
+2. `__repr__(self)`: This special method is called when the object needs to be represented as a string, such as when using the `print()` function or during string formatting. In this case, it returns a string representation of the biconditional expression that includes both the left and right sides.
+
+3. `evaluate(self, model)`: This method takes a `model` dictionary as an argument and evaluates the biconditional operation. The biconditional is `True` if both sides have the same truth value.
+
+4. `formula(self)`: This method returns the formula representation of the biconditional expression. It combines the string representations of the left and right sides using the logical biconditional symbol "<=>" to indicate that the left side is equivalent to the right side.
+
+5. `symbols(self)`: This method gathers the set of symbols used in the biconditional expression. It delegates this task to the symbols used in both the left and right sides of the biconditional and then combines them into a single set.
+
+Overall, the `Biconditional` class encapsulates the behavior of the logical biconditional operation. It allows you to create biconditionals of logical expressions, evaluate their truth values, retrieve their formula representations, and gather symbols used within the biconditional. This is useful for expressing equivalence between two logical statements.
+***
+## Truth Table
+
+```python
+# Function to create truth table for a set of symbols
+def create_table(symbols):
+    values = [True, False]  # Possible truth values for each symbol
+    num_columns = len(symbols)  # Number of symbols in the set
+    all_combinations = list(itertools.product(values, repeat=num_columns))  # Generate all possible combinations of truth values
+    table = []  # Initialize an empty list to hold the truth table rows
+    for model in all_combinations:
+        temp = dict()  # Create a temporary dictionary to hold truth values for symbols in a specific row
+        for symbol, value in zip(symbols, model):
+            temp[symbol] = value  # Assign the truth value to the symbol in the dictionary
+        table.append(temp)  # Add the dictionary to the truth table as a row
+        del temp  # Delete the temporary dictionary to free up memory
+    return table  # Return the completed truth table
+```
+
+Let's go through each part of the function:
+
+1. `def create_table(symbols)`: This is the function definition that takes a list of logical symbols as an argument.
+
+2. `values = [True, False]`: This creates a list containing the possible truth values that each symbol can have: `True` or `False`.
+
+3. `num_columns = len(symbols)`: This calculates the number of symbols in the input list, which determines the number of columns in the truth table.
+
+4. `all_combinations = list(itertools.product(values, repeat=num_columns))`: This line generates all possible combinations of truth values for the given number of symbols using the `itertools.product()` function.
+
+5. `table = []`: This initializes an empty list called `table` to store the rows of the truth table.
+
+6. The `for` loop iterates through each combination of truth values (`model`) generated by `itertools.product()`.
+
+7. Inside the loop, a temporary dictionary `temp` is created to associate each symbol with its truth value in a specific row.
+
+8. The nested `for` loop (`for symbol, value in zip(symbols, model)`) iterates through each symbol and its corresponding truth value in the current combination.
+
+9. `temp[symbol] = value`: This line assigns the truth value (`value`) to the symbol (`symbol`) in the temporary dictionary.
+
+10. `table.append(temp)`: Once the temporary dictionary is populated with truth values for all symbols in the current combination, it's added as a row to the truth table.
+
+11. `del temp`: After adding the row, the temporary dictionary is deleted to free up memory.
+
+12. Finally, the completed truth table (list of dictionaries) is returned as the output of the function.
+
+In essence, the `create_table` function generates a truth table by considering all possible combinations of truth values for a given set of logical symbols. Each row of the truth table is represented as a dictionary where symbols are associated with their corresponding truth values. The function is useful for analyzing logical expressions and evaluating their truth values for various scenarios.
+***
+## Model Check
+
+```python
+# Function to check if a given knowledge base entails a query
+def model_check(knowledge, query):
+    symbols = set.union(knowledge.symbols(), query.symbols())  # Gather all symbols used in both knowledge and query
+    model_table = create_table(symbols)  # Create a truth table for the symbols
+    final_answers = []  # Initialize an empty list to hold the query's truth values in each model
+    for model in model_table:
+        if knowledge.evaluate(model):  # Check if the knowledge base evaluates to True in the current model
+            answer = query.evaluate(model)  # Evaluate the query in the current model
+            final_answers.append(answer)  # Add the query's truth value to the list
+    final_answer = all(final_answers)  # Determine if the query is True in all valid models
+    return final_answer  # Return whether the knowledge base entails the query
+```
+
+Let's go through each part of the function:
+
+1. `def model_check(knowledge, query)`: This is the function definition that takes two arguments: a `knowledge` expression (the logical knowledge base) and a `query` expression (the logical query to be checked for entailment).
+
+2. `symbols = set.union(knowledge.symbols(), query.symbols())`: This line gathers all the symbols used in both the `knowledge` and `query` expressions by performing a union of their symbol sets.
+
+3. `model_table = create_table(symbols)`: This line creates a truth table for the collected symbols using the `create_table` function defined earlier.
+
+4. `final_answers = []`: This initializes an empty list called `final_answers` to hold the truth values of the `query` expression for each model.
+
+5. The `for` loop iterates through each `model` (dictionary of symbol truth values) in the `model_table`.
+
+6. Inside the loop, `knowledge.evaluate(model)` checks if the `knowledge` base is True in the current `model`.
+
+7. If the `knowledge` base is True, `query.evaluate(model)` evaluates the `query` expression in the same `model`.
+
+8. The truth value of the `query` in the current `model` is appended to the `final_answers` list.
+
+9. After evaluating all models, `final_answer = all(final_answers)` checks if the `query` expression is True in all valid models.
+
+10. The function returns `final_answer`, which indicates whether the given `knowledge` base entails the `query`.
+
+In summary, the `model_check` function uses truth tables to check whether a given `knowledge` base logically entails a specific `query`. It evaluates both the `knowledge` base and the `query` for each possible model (combination of symbol truth values) and checks if the `query` is consistently true in all valid models where the `knowledge` base is also true.
+***
+# ==harry.py==
+ This code uses the logic module that defines classes and functions for working with logical expressions, and it demonstrates various logical operations and evaluations. Let's go through each part of the code and explain what it does:
+
+```python
 from logic import *
 
-rain = Symbol("rain") #Its raining
-hagrid = Symbol("hagrid") #Harry visited Hagrid
-dumbledore = Symbol("dumbledore") #Harry visited dumbledore
-```
+# Define logical symbols
+rain = Symbol("rain")  # Represents the statement "It's raining"
+hagrid = Symbol("hagrid")  # Represents the statement "Harry visited Hagrid"
+dumbledore = Symbol("dumbledore")  # Represents the statement "Harry visited Dumbledore"
 
-The code snippet defines three symbolic variables: `rain`, `hagrid`, and `dumbledore`. Each of these variables seems to represent a different event or condition in a logical context.
-
-Here's a breakdown of what the code does:
-
-1. The `from logic import *` statement imports all symbols and functions defined in the `logic` module. This module has been explained above.
-
-2. `Symbol("rain")`, `Symbol("hagrid")`, and `Symbol("dumbledore")` create instances of the `Symbol` class from the `logic` module, representing different conditions or events in a logical context.
-
-These symbols can be used to represent various conditions, and you can manipulate and combine them using the logical operators and functions provided by the `logic` module. The code sets the stage for building logical expressions and performing operations on them to model different scenarios or situations.
-***
-The `knowledge` variable is being assigned a logical expression that represents a collection of knowledge or constraints. The expression appears to define a set of conditions and relationships using logical operators. Let's break down the `knowledge` expression step by step:
-
-```python
+# Define a knowledge base using logical expressions
 knowledge = And(
-    Implication(Not(rain), hagrid),
-    Or(hagrid, dumbledore),
-    Not(And(hagrid, dumbledore)),
-    dumbledore
+    Implication(Not(rain), hagrid),  # If it's not raining, Harry visited Hagrid
+    Or(hagrid, dumbledore),  # Harry visited Hagrid or Dumbledore
+    Not(And(hagrid, dumbledore)),  # Harry didn't visit both Hagrid and Dumbledore simultaneously
+    dumbledore  # Harry visited Dumbledore
 )
-```
 
-1. `Implication(Not(rain), hagrid)` represents the logical implication "If it's not raining, then Harry visited Hagrid." This implies that if it's not raining, Harry did visit Hagrid.
-
-2. `Or(hagrid, dumbledore)` represents the logical disjunction "Harry visited Hagrid or Harry visited Dumbledore." This states that either Harry visited Hagrid or he visited Dumbledore or both.
-
-3. `Not(And(hagrid, dumbledore))` represents the logical negation of "Harry visited both Hagrid and Dumbledore simultaneously." This indicates that Harry did not visit both of them together.
-
-4. `dumbledore` simply represents the fact that Harry visited Dumbledore.
-
-5. Finally, the entire `knowledge` expression is encapsulated in the `And()` function, which means that all of these conditions must be true simultaneously for the knowledge to hold.
-
-In summary, the `knowledge` expression represents a logical set of constraints and relationships involving Harry's visits to Hagrid and Dumbledore, as well as the weather condition of raining. This logical expression can be used to reason about various scenarios and evaluate the truth or falsity of different combinations of events.
-***
-The `model_check` function is being used here to check whether the variable `rain` is logically entailed by the given `knowledge` expression. In other words, it checks whether, based on the defined knowledge, it must necessarily be true that it's raining. Let's see what the output of this code might be:
-
-```python
+# Check if the knowledge base entails the statement "It's raining"
 print(model_check(knowledge, rain))
-```
 
-Assuming that the `model_check` function and the `knowledge` expression are implemented correctly based on the previous discussions, the output of this code will indicate whether the knowledge implies that it is raining or not.
-
-If the output is `True`, it means that based on the provided knowledge, it must be true that it is raining. If the output is `False`, it means that the knowledge does not necessarily imply that it is raining. The output will reflect the logical consequence of the `knowledge` expression with respect to the `rain` variable.
-***
-```
+# Define logical symbols
 P = Symbol("It is a Tuesday")
 Q = Symbol("It is Raining")
 R = Symbol("Harry will go for a run")
-```
-You have defined three symbolic variables using the `Symbol` class:
 
-1. `P` represents the statement "It is a Tuesday."
-2. `Q` represents the statement "It is Raining."
-3. `R` represents the statement "Harry will go for a run."
+# Define another knowledge base using logical expressions
+knowledge1 = And(Implication(And(P, Not(Q)), R),  # If it's Tuesday and not raining, Harry will go for a run
+                  P,  # It is a Tuesday
+                  Not(Q))  # It is not raining
 
-These symbolic variables will likely be used to build logical expressions and reason about various scenarios using the logical operators and constructs provided by the logic module you are working with.
-***
-The `knowledge1` expression is constructed using the `And()` function to represent a logical conjunction of multiple conditions. It appears to define a logical scenario involving the statements represented by the symbols `P`, `Q`, and `R`. Let's break down the `knowledge1` expression:
+print(knowledge1)  # Print the knowledge base
 
-```python
-knowledge1 = And(
-    Implication(And(P, Not(Q)), R),
-    P,
-    Not(Q)
-)
-```
+print(knowledge1.formula())  # Print the formula representation of the knowledge base
+print(knowledge1.symbols())  # Print the set of symbols used in the knowledge base
 
-1. `Implication(And(P, Not(Q)), R)` represents the logical implication "If it is a Tuesday and it is not raining, then Harry will go for a run." This implies that if both "It is a Tuesday" (`P`) and "It is not Raining" (`Not(Q)`) are true, then "Harry will go for a run" (`R`) is true.
+# Check if the knowledge base entails the statement "Harry will go for a run"
+print(model_check(knowledge1, R))
 
-2. `P` represents the statement "It is a Tuesday."
-
-3. `Not(Q)` represents the statement "It is not Raining."
-
-4. The entire `knowledge1` expression is encapsulated in the `And()` function, which means that all of these conditions must be true simultaneously for the knowledge to hold.
-
-When you print the `knowledge1` expression using `print(knowledge1)`, it will display the string representation of the logical expression you've created. The output will show how the various conditions are combined using logical operators. Keep in mind that the actual output format might depend on the specific logic library or module you are using in your code.
-***
-```
-knowledge1.formula()
-knowledge1.symbols()
-
-model_check(knowledge1, R)
-
+# Print the negation of the statement "It is a Tuesday"
 print(Not(P))
 
-Biconditional(P,Q)
-And(P,Q)
+# Create a biconditional expression between P and Q
+print(Biconditional(P, Q))
+
+# Create a conjunction (AND) expression between P and Q
+print(And(P, Q))
 ```
 
-Let's go through each of the provided expressions and statements:
+Here's a breakdown of the major steps in the code:
 
-1. `knowledge1.formula()`:
-   This will return a string representation of the formula represented by the `knowledge1` expression. The output should be similar to the logical expression you provided when constructing `knowledge1`. For example, if your logic library formats formulas like standard logical notation, the output might look like:
-   ```
-   ((P ∧ ¬Q) => R) ∧ P ∧ ¬Q
-   ```
+1. The `from logic import *` statement imports classes and functions from the `logic` module, which provides support for symbolic logical expressions.
 
-2. `knowledge1.symbols()`:
-   This will return the set of symbols present in the `knowledge1` expression. Since you have used `P`, `Q`, and `R` in `knowledge1`, the output should be a set containing these symbols: `{P, Q, R}`.
+2. Logical symbols `rain`, `hagrid`, and `dumbledore` are defined using the `Symbol` class, representing different statements.
 
-3. `model_check(knowledge1, R)`:
-   This will use the `model_check` function to check if the statement "Harry will go for a run" (`R`) is logically entailed by `knowledge1`. The output will be a boolean value indicating whether, based on the given knowledge, it must be true that Harry will go for a run.
+3. A knowledge base `knowledge` is defined using logical expressions (`And`, `Implication`, `Or`, and `Not`) that capture relationships between the logical symbols.
 
-4. `print(Not(P))`:
-   This will print the logical negation of the statement "It is a Tuesday" (`P`). If the logic library formats negations as "¬P", the output will be `¬P`.
+4. The `model_check` function is used to check if the knowledge base entails the statement "It's raining." The result is printed.
 
-5. `Biconditional(P, Q)`:
-   This seems to create a biconditional expression between `P` and `Q`. A biconditional states that `P` is true if and only if `Q` is true, and vice versa. The output of this line would be the biconditional expression representation.
+5. More logical symbols `P`, `Q`, and `R` are defined.
 
-6. `And(P, Q)`:
-   This creates a logical AND expression between `P` and `Q`, stating that both `P` and `Q` must be true. The output of this line would be the AND expression representation.
+6. Another knowledge base `knowledge1` is defined using logical expressions to capture relationships between the new symbols.
 
+7. The contents of `knowledge1` are printed.
+
+8. The formula representation of `knowledge1` and the set of symbols it uses are printed.
+
+9. The `model_check` function is used to check if the knowledge base `knowledge1` entails the statement "Harry will go for a run."
+
+10. The negation of the statement "It is a Tuesday" is printed.
+
+11. Biconditional and conjunction expressions involving `P` and `Q` are created and printed.
+
+Overall, the code demonstrates how to create logical expressions, define knowledge bases, evaluate truth values, and use logical operators to perform various operations in symbolic logic.
+***
+# ==clue.py==
+This code uses the `logic` module to represent and reason about the game of Clue (also known as Cluedo), a popular board game. The code defines a knowledge base and checks the possible values of different cards using the `model_check` function. Let's break down the code step by step:
+
+```python
+from logic import *
+
+# Define logical symbols for characters, rooms, and weapons
+mustard = Symbol("ColMustard")
+plum = Symbol("ProfPlum")
+scarlet = Symbol("MsScarlet")
+characters = [mustard, plum, scarlet]
+
+ballroom = Symbol("ballroom")
+kitchen = Symbol("kitchen")
+library = Symbol("library")
+rooms = [ballroom, kitchen, library]
+
+knife = Symbol("knife")
+revolver = Symbol("revolver")
+wrench = Symbol("wrench")
+weapons = [knife, revolver, wrench]
+
+# Combine all symbols into a single list
+symbols = characters + rooms + weapons
+
+# Function to check knowledge and print results
+def check_knowledge(knowledge):
+    for symbol in symbols:
+        if model_check(knowledge, symbol):
+            print(f"{symbol}: YES")
+        elif model_check(knowledge, Not(symbol)):
+            print(f"{symbol}: NO")
+        else:
+            print(f"{symbol}: MAYBE")
+
+# Create an initial knowledge base
+knowledge = And(
+    Or(mustard, plum, scarlet),   # There must be a person
+    Or(ballroom, kitchen, library),  # There must be a room
+    Or(knife, revolver, wrench)  # There must be a weapon
+)
+
+# Add more information to the knowledge base
+knowledge.add(And(
+    Not(mustard), Not(kitchen), Not(revolver)
+))
+
+knowledge.add(Or(
+    Not(scarlet), Not(library), Not(wrench)
+))
+
+# Check and print the possible values of each card
+check_knowledge(knowledge)
+```
+
+Here's what the code does:
+
+1. Logical symbols are defined for characters, rooms, and weapons using the `Symbol` class.
+
+2. Lists of characters, rooms, and weapons are created.
+
+3. All logical symbols are combined into a single list called `symbols`.
+
+4. The `check_knowledge` function is defined. It takes a `knowledge` expression as input and checks whether each symbol in `symbols` is true, false, or undetermined based on the `knowledge`.
+
+5. An initial knowledge base is created using logical expressions. It states that there must be a person, room, and weapon.
+
+6. Additional constraints are added to the knowledge base using logical expressions. These constraints represent certain cards being known or not known based on the provided information.
+
+7. The `check_knowledge` function is called with the `knowledge` base, and it prints whether each card is possibly true (YES), possibly false (NO), or unknown (MAYBE) based on the knowledge.
+
+The code essentially simulates reasoning about the game of Clue by using symbolic logic to determine the possible values of different cards given the provided information.
+***
+# ==mastermind.py==
+This code represents a logic puzzle in which you have to deduce the positions and colors of objects based on certain rules. The puzzle involves four colors ("red," "blue," "green," "yellow") and four positions (numbered 0 to 3). The goal is to determine the color of each object in each position based on the given constraints. Let's break down the code step by step:
+
+```python
+from logic import *
+
+# Define colors and create symbols for each color-position combination
+colors = ["red", "blue", "green", "yellow"]
+symbols = []
+for i in range(4):
+    for color in colors:
+        symbols.append(Symbol(f"{color}{i}"))
+
+# Initialize an empty knowledge base
+knowledge = And()
+
+# Add constraints to the knowledge base
+
+# Each color has a position.
+for color in colors:
+    knowledge.add(Or(
+        Symbol(f"{color}0"),
+        Symbol(f"{color}1"),
+        Symbol(f"{color}2"),
+        Symbol(f"{color}3")
+    ))
+
+# Only one position per color.
+for color in colors:
+    for i in range(4):
+        for j in range(4):
+            if i != j:
+                knowledge.add(Implication(
+                    Symbol(f"{color}{i}"), Not(Symbol(f"{color}{j}"))
+                ))
+
+# Only one color per position.
+for i in range(4):
+    for c1 in colors:
+        for c2 in colors:
+            if c1 != c2:
+                knowledge.add(Implication(
+                    Symbol(f"{c1}{i}"), Not(Symbol(f"{c2}{i}"))
+                ))
+
+# Add specific conditions based on the given information
+knowledge.add(Or(
+    # Specific conditions for object colors and positions
+))
+
+knowledge.add(And(
+    Not(Symbol("blue0")), Not(Symbol("red1")), Not(Symbol("green2")), Not(Symbol("yellow3"))
+))
+
+# Print the knowledge base, symbols, and deduced solutions
+print(knowledge)
+print(symbols)
+for symbol in symbols:
+    if model_check(knowledge, symbol):
+        print(symbol)
+```
+
+Here's a breakdown of the code:
+
+1. The code begins by importing the `logic` module.
+
+2. A list `colors` is defined to represent the available colors. Symbols are created for each color-position combination (e.g., "red0," "blue1," etc.) using nested loops.
+
+3. An empty knowledge base `knowledge` is initialized using the `And()` class.
+
+4. Constraints are added to the knowledge base using nested loops and logical expressions:
+   - Each color must have a position.
+   - Only one position per color.
+   - Only one color per position.
+
+5. Specific conditions based on the given information are added to the knowledge base using the `knowledge.add()` method. These conditions represent specific scenarios involving colors and positions.
+
+6. The final condition restricts certain color-position combinations that are known not to be true.
+
+7. The knowledge base, symbols, and deduced solutions are printed:
+   - The knowledge base is printed using `print(knowledge)`.
+   - The list of symbols is printed using `print(symbols)`.
+   - The code uses the `model_check` function to check each symbol and print the ones that are deduced to be true based on the given constraints.
+
+The code essentially sets up a logical puzzle involving colors and positions, defines the constraints, adds specific conditions, and then uses logical reasoning to deduce which color-position combinations are possible solutions to the puzzle.

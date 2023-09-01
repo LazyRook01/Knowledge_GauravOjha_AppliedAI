@@ -1,74 +1,5 @@
-
-#def create_table(symbols):
-#     values = [True, False]
-#     num_columns = len(symbols)
-#     all_combinations = list(itertools.product(values, repeat=num_columns))
-#     table = []
-#
-#     for model in all_combinations:
-#         temp = dict()
-#         for symbol, value in zip(symbols, model):
-#             temp[symbol] = value
-#         table.append(temp)
-#         del (temp)
-#
-#     return table
-#
-#
-# def model_check(knowledge, query):
-#     symbols = set.union(knowledge.symbols(), query.symbols())
-#
-#     model_table = create_table(symbols)
-#     final_answers = []
-#
-#     for model in model_table:
-#
-#         if knowledge.evaluate(model):
-#             answer = query.evaluate(model)
-#             final_answers.append(answer)
-#
-#     final_answer = all(final_answers)
-#
-#     return final_answer
-
-
 import itertools
-# class Sentence():
-#     def evaluate(self, model):
-#         raise Exception("nothing to evaluate")
-#     def formula(self):
-#         return ""
-#     def symbols(self):
-#         return set()
-# '''
-#     @classmethod
-#     def validate(cls, sentence):
-#         if not isinstance(sentence, Sentence):
-#             raise TypeError("must be a logical sentence")
-#
-#     @classmethod
-#     def parenthesize(cls, s):
-#         """Parenthesizes an expression if not already parenthesized."""
-#         def balanced(s):
-#             """Checks if a string has balanced parentheses."""
-#             count = 0
-#             for c in s:
-#                 if c == "(":
-#                     count += 1
-#                 elif c == ")":
-#                     if count <= 0:
-#                         return False
-#                     count -= 1
-#             return count == 0
-#         if not len(s) or s.isalpha() or (
-#             s[0] == "(" and s[-1] == ")" and balanced(s[1:-1])
-#         ):
-#             return s
-#         else:
-#             return f"({s})"
-# '''
-#
-#
+
 class Symbol():
 
     def __init__(self, name):
@@ -196,30 +127,6 @@ class Biconditional():
 
     def symbols(self):
         return set.union(self.left.symbols(), self.right.symbols())
-
-
-# def model_check(knowledge, query):
-#
-#     def check_all(knowledge, query, symbols, model):
-#         if not symbols:
-#             if knowledge.evaluate(model):
-#                 return query.evaluate(model)
-#             return True
-#         else:
-#             remaining = symbols.copy()
-#             p = remaining.pop()
-#             model_true = model.copy()
-#             model_true[p] = True
-#             model_false = model.copy()
-#             model_false[p] = False
-#
-#             return (check_all(knowledge, query, remaining, model_true) and
-#                     check_all(knowledge, query, remaining, model_false))
-#
-#     symbols = set.union(knowledge.symbols(), query.symbols())
-#
-#     return check_all(knowledge, query, symbols, dict())
-
 
 
 def create_table(symbols):

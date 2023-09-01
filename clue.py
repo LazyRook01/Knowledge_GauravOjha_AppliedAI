@@ -1,5 +1,6 @@
-from logic_new import *
+from logic import *
 
+# Define logical symbols for characters, rooms, and weapons
 mustard = Symbol("ColMustard")
 plum = Symbol("ProfPlum")
 scarlet = Symbol("MsScarlet")
@@ -15,9 +16,10 @@ revolver = Symbol("revolver")
 wrench = Symbol("wrench")
 weapons = [knife, revolver, wrench]
 
+# Combine all symbols into a single list
 symbols = characters + rooms + weapons
 
-
+# Function to check knowledge and print results
 def check_knowledge(knowledge):
     for symbol in symbols:
         if model_check(knowledge, symbol):
@@ -27,26 +29,21 @@ def check_knowledge(knowledge):
         else:
             print(f"{symbol}: MAYBE")
 
-
-# There must be a person, room, and weapon.
+# Create an initial knowledge base
 knowledge = And(
-    Or(mustard, plum, scarlet),
-    Or(ballroom, kitchen, library),
-    Or(knife, revolver, wrench)
+    Or(mustard, plum, scarlet),   # There must be a person
+    Or(ballroom, kitchen, library),  # There must be a room
+    Or(knife, revolver, wrench)  # There must be a weapon
 )
 
-
+# Add more information to the knowledge base
 knowledge.add(And(
     Not(mustard), Not(kitchen), Not(revolver)
 ))
-#
-# Unknown card
+
 knowledge.add(Or(
     Not(scarlet), Not(library), Not(wrench)
 ))
-# #
-# # # Known cards
-# knowledge.add(Not(plum))
-# knowledge.add(Not(ballroom))
 
+# Check and print the possible values of each card
 check_knowledge(knowledge)

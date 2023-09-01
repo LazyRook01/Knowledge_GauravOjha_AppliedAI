@@ -1,17 +1,21 @@
-from logic_new import *
+from logic import *
 
+# List of people and houses
 people = ["Gilderoy", "Pomona", "Minerva", "Horace"]
 houses = ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]
 
+# List to store symbol instances
 symbols = []
 
+# Create a knowledge base using logical conjunction (AND)
 knowledge = And()
 
+# Generate symbols for all possible person-house combinations
 for person in people:
     for house in houses:
         symbols.append(Symbol(f"{person}{house}"))
 
-# Each person belongs to a house.
+# Each person belongs to exactly one house.
 for person in people:
     knowledge.add(Or(
         Symbol(f"{person}Gryffindor"),
@@ -19,6 +23,7 @@ for person in people:
         Symbol(f"{person}Ravenclaw"),
         Symbol(f"{person}Slytherin")
     ))
+
 # Only one house per person.
 for person in people:
     for h1 in houses:
@@ -37,19 +42,20 @@ for house in houses:
                     Implication(Symbol(f"{p1}{house}"), Not(Symbol(f"{p2}{house}")))
                 )
 
-# knowledge.add(
-#     Or(Symbol("GilderoyGryffindor"), Symbol("GilderoyRavenclaw"))
-# )
-#
-# knowledge.add(
-#     Not(Symbol("PomonaSlytherin"))
-# )
-#
-# knowledge.add(
-#     Symbol("MinervaGryffindor")
-# )
+# Additional knowledge assertions
+knowledge.add(
+    Or(Symbol("GilderoyGryffindor"), Symbol("GilderoyRavenclaw"))
+)
 
+knowledge.add(
+    Not(Symbol("PomonaSlytherin"))
+)
+
+knowledge.add(
+    Symbol("MinervaGryffindor")
+)
+
+# Check each symbol (person-house combination) against the knowledge base
 for symbol in symbols:
     if model_check(knowledge, symbol):
         print(symbol)
-
